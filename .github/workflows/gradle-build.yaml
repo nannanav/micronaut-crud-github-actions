@@ -30,6 +30,19 @@ jobs:
           distribution: 'temurin'  # Other options: 'adopt', 'zulu', etc.
           java-version: '21'
 
+      - name: Wait for MySQL to be Ready
+        run: |
+          echo "Waiting for MySQL to start..."
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -u root --password=root --silent; then
+              echo "MySQL is ready!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "MySQL failed to start!"
+          exit 1
+
       - name: Grant Execute Permissions for Gradle
         run: chmod +x gradlew
 
