@@ -1,21 +1,21 @@
 name: Gradle Build & Test on Merge
 
-# on:
-#   push:
-#     branches:
-#       - jdbc  # Triggers only when changes are pushed to the main branch (i.e., after PR merge)
-
 on:
-  pull_request_review:
-    types: [submitted]
+  push:
+    branches:
+      - jdbc  # Triggers only when changes are pushed to the main branch (i.e., after PR merge)
+
+# on:
+#   pull_request_review:
+#     types: [submitted]
 
 jobs:
-  build-and-merge:
-    if: github.event.review.state == 'approved'  # Run only if the review is approved
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write  # Needed to merge the PR
+  # build-and-merge:
+  #   if: github.event.review.state == 'approved'  # Run only if the review is approved
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #     pull-requests: write  # Needed to merge the PR
 
   build:
     runs-on: ubuntu-latest
@@ -63,9 +63,9 @@ jobs:
       - name: Build the Project
         run: ./gradlew build
 
-      - name: Merge the PR
-        if: success()
-        run: |
-          gh pr merge "$GITHUB_REF" --merge --auto
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Merge the PR
+      #   if: success()
+      #   run: |
+      #     gh pr merge "$GITHUB_REF" --merge --auto
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
