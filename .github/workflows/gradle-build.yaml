@@ -33,7 +33,7 @@ jobs:
       - name: Wait for MySQL to be Ready
         run: |
           echo "Waiting for MySQL to start..."
-          for i in {1..30}; do
+          for i in {1..60}; do  # Increased from 30 to 60 retries
             if mysqladmin ping -h 127.0.0.1 -u root --password=root --silent; then
               echo "MySQL is ready!"
               exit 0
