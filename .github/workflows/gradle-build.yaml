@@ -3,7 +3,7 @@ name: Gradle Build & Test on Merge
 on:
   push:
     branches:
-      - main  # Triggers only when changes are pushed to the main branch (i.e., after PR merge)
+      - jdbc  # Triggers only when changes are pushed to the main branch (i.e., after PR merge)
 
 jobs:
   build:
