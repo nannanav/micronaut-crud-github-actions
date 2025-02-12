@@ -1,11 +1,22 @@
 name: Gradle Build & Test on Merge
 
+# on:
+#   push:
+#     branches:
+#       - jdbc  # Triggers only when changes are pushed to the main branch (i.e., after PR merge)
+
 on:
-  push:
-    branches:
-      - jdbc  # Triggers only when changes are pushed to the main branch (i.e., after PR merge)
+  pull_request_review:
+    types: [submitted]
 
 jobs:
+  build-and-merge:
+    if: github.event.review.state == 'approved'  # Run only if the review is approved
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write  # Needed to merge the PR
+
   build:
     runs-on: ubuntu-latest
     services:
@@ -33,7 +44,7 @@ jobs:
       - name: Wait for MySQL to be Ready
         run: |
           echo "Waiting for MySQL to start..."
-          for i in {1..60}; do  # Increased from 30 to 60 retries
+          for i in {1...30}; do
             if mysqladmin ping -h 127.0.0.1 -u root --password=root --silent; then
               echo "MySQL is ready!"
               exit 0
@@ -51,3 +62,10 @@ jobs:
 
       - name: Build the Project
         run: ./gradlew build
+
+      - name: Merge the PR
+        if: success()
+        run: |
+          gh pr merge "$GITHUB_REF" --merge --auto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
